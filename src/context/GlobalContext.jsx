@@ -5,13 +5,13 @@ const GlobalContext = createContext();
 export const GlobalProvider = ({children}) => {
     const urlAPI = import.meta.env.VITE_URL_API
 
-    const [task, setTask] = useState();
+    const [tasks, setTasks] = useState();
 
     const getTask = async () => {
         try {
             const resp = await fetch(`${urlAPI}/tasks`);
             const data = await resp.json();
-            setTask(data)
+            setTasks(data)
             console.log(data);
             
         } catch (error) {
@@ -25,7 +25,7 @@ export const GlobalProvider = ({children}) => {
 
 
     const value= {
-        task
+        tasks
     }
 
     return (

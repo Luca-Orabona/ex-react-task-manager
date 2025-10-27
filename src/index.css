@@ -1,0 +1,34 @@
+/* GESTIONE TABELLA */
+.custom-table {
+  width: 100%;
+  table-layout: fixed; /* REGOLA CHIAVE: forza larghezze definite */
+  border-collapse: separate; /* fondamentale per arrotondare i bordi */
+  border-spacing: 0; /* rimuove lo spazio tra celle */
+  border: 1px solid #dee2e6;
+  border-radius: 12px; 
+  overflow: hidden; /* fa sì che gli angoli arrotondati si vedano */
+}
+
+.custom-table thead {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.custom-table th,
+.custom-table td {
+  border-bottom: 1px solid #dee2e6; 
+  padding: 12px 8px;
+  text-align: center;      
+  vertical-align: middle;  /* centra verticalmente */
+} 
+
+.custom-table tbody tr:last-child td {
+  border-bottom: none; /* rimuove il bordo inferiore dell'ultima riga */
+}
+
+
+
+
+
+
+

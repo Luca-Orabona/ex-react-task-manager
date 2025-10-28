@@ -16,9 +16,9 @@ const TaskList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {tasks && tasks.map((t, i) => (
+                    {tasks && tasks.map(t => (
                         <TaskRow
-                            key={i}
+                            key={t.id}
                             id={t.id}
                             title={t.title}
                             status={t.status}

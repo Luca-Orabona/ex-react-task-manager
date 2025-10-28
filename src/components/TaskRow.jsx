@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { Link } from "react-router-dom";
 import styles from "./TaskRow.module.css"
 
 // Funzione per assegnare il colore di sfondo in base allo status
@@ -19,7 +20,7 @@ const TaskRow = ({ title, status, createdAt, id} ) => {
   return (
     <tr>
       <td>{id}</td>
-      <td className={styles.title}>{title}</td>
+      <td className={styles.title}><Link to={`/task/${id}`} className="text-decoration-none text-dark">{title}</Link></td>
       <td>
         <span className={getStatusClass(status)} title={status}></span>
       </td>
@@ -27,6 +28,7 @@ const TaskRow = ({ title, status, createdAt, id} ) => {
     </tr>
   );
 };
+
 
 // React.memo evita render inutili se props non cambiano
 export default memo(TaskRow);

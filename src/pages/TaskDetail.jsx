@@ -19,7 +19,7 @@ const TaskDetail = () => {
 
   //modale modifica task
   const [title, setTitle] = useState("");
-  const [selectStatus, setSelectStatus] = useState("");
+  const [selectStatus, setSelectStatus] = useState("To do");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [showModificationModal, setShowModificationModal] = useState(false);
@@ -46,7 +46,7 @@ const TaskDetail = () => {
     if (
       !title.trim() ||
       !description.trim() ||
-      !status
+      !selectStatus
     ) {
       setError("Tutti i campi devono essere compilati");
       return;
@@ -55,12 +55,11 @@ const TaskDetail = () => {
     const newTask = {
       title,
       description,
-      status
+      status : selectStatus
     }
 
-
-
     updateTask(newTask, id)
+
     setShowModificationModal(false);
     navigate("/");
 

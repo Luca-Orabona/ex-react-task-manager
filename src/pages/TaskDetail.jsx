@@ -2,14 +2,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
 import ModalDelete from "../components/ModalDelete";
 import ModificationModal from "../components/ModificationModal";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~";
+const symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~£";
 
 const TaskDetail = () => {
   const { tasks, removeTask, updateTask } = useGlobalContext();
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const task = tasks.find((t) => t.id === Number(id));
 
   //modale elimina task
   const [showModalDelete, setShowModalDelete] = useState(false);
@@ -17,10 +19,20 @@ const TaskDetail = () => {
 
   //modale modifica task
   const [title, setTitle] = useState("");
+  const [selectStatus, setSelectStatus] = useState("");
+  const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [showModificationModal, setShowModificationModal] = useState(false);
-  const statusRef = useRef();
-  const descriptionRef = useRef();
+
+
+  //aggiungo i campi di defauld nel modale modifica task
+  useEffect(() => {
+    if (task) {
+      setTitle(task.title)
+      setSelectStatus(task.status)
+      setDescription(task.description)
+    }
+  }, [task])
 
   const status = [...new Set(tasks.map((t) => t.status))];
 
@@ -33,8 +45,8 @@ const TaskDetail = () => {
 
     if (
       !title.trim() ||
-      !descriptionRef.current.value.trim() ||
-      !statusRef.current.value
+      !description.trim() ||
+      !status
     ) {
       setError("Tutti i campi devono essere compilati");
       return;
@@ -42,8 +54,8 @@ const TaskDetail = () => {
 
     const newTask = {
       title,
-      description: descriptionRef.current.value,
-      status: statusRef.current.value
+      description,
+      status
     }
 
 
@@ -55,15 +67,15 @@ const TaskDetail = () => {
     setError(""); // reset errori
 
     // reset campi
-    descriptionRef.current.value = "";
-    statusRef.current.value = "";
+    setDescription("")
+    setSelectStatus("")
     setTitle("");
   };
 
 
 
 
-  const task = tasks.find((t) => t.id === Number(id));
+
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -185,7 +197,8 @@ const TaskDetail = () => {
                 className="form-control"
                 id="formDescription"
                 rows="3"
-                ref={descriptionRef}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 placeholder="Inserisci una descrizione"
               />
             </div>
@@ -195,7 +208,12 @@ const TaskDetail = () => {
               <label htmlFor="formStatus" className="form-label">
                 Stato
               </label>
-              <select className="form-select" id="formStatus" ref={statusRef}>
+              <select
+                className="form-select"
+                id="formStatus"
+                value={selectStatus}
+                onChange={(e) => setSelectStatus(e.target.value)}
+              >
                 {status.map((t) => (
                   <option key={t} value={t}>
                     {t}

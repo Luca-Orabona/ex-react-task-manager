@@ -1,9 +1,13 @@
 import { useGlobalContext } from "../context/GlobalContext";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import TaskRow from "../components/TaskRow";
+import { ArrowUpWideNarrow, ArrowDownWideNarrow } from "lucide-react";
+import { debounce } from "../utils/Debounce.js"
 
 const TaskList = () => {
     const { tasks } = useGlobalContext();
+
+    const [searchQuery, setSearchQuery] = useState("")
 
     const [sortBy, setSortBy] = useState("Data di creazione");
     const [sortOrder, setSortOrder] = useState(1);
@@ -19,34 +23,75 @@ const TaskList = () => {
     }
 
 
-    const sortTasks = useMemo(() => {
-        return [...tasks].sort((a, b) => {
-            switch (sortBy) {
-                case "titolo":
-                    return a.title.localeCompare(b.title) * sortOrder
-                case "stato":
-                    const status = ["To do", "Doing", "Done"]
-                    return (status.indexOf(a.status) - status.indexOf(b.status)) * sortOrder
-                case "data di creazione":
-                    return (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) * sortOrder
-            };
-        });
-    }, [tasks, sortBy, sortOrder]);
+    const filterAndSortTasks = useMemo(() => {
+        return [...tasks]
+            .filter(t => t.title.toLowerCase().includes(searchQuery.toLocaleLowerCase()))
+            .sort((a, b) => {
+                switch (sortBy) {
+                    case "titolo":
+                        return a.title.localeCompare(b.title) * sortOrder
+                    case "stato":
+                        const status = ["To do", "Doing", "Done"]
+                        return (status.indexOf(a.status) - status.indexOf(b.status)) * sortOrder
+                    case "data di creazione":
+                        return (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) * sortOrder
+                };
+            })
+    }, [tasks, sortBy, sortOrder, searchQuery]);
+
+    const DebounceSearchQuery = useCallback(debounce(setSearchQuery, 500), [])
+
+    // 🔹 funzione helper per mostrare la giusta icona
+    const renderSortIcon = (field) => {
+        if (sortBy !== field) return null;
+        return sortOrder === 1 ? (
+            <ArrowUpWideNarrow size={16} />
+        ) : (
+            <ArrowDownWideNarrow size={16} />
+        );
+    };
 
 
     return (
         <div className="container mt-4 mb-4">
+
+            <input
+                type="text"
+                className="form-control mb-3"
+                onChange={e => DebounceSearchQuery(e.target.value)}
+                placeholder="Cerca titolo..."
+            />
+
             <table className="custom-table">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th style={{ cursor: "pointer" }} onClick={() => handleSort("titolo")}>titolo</th>
-                        <th style={{ cursor: "pointer" }} onClick={() => handleSort("stato")}>Stato</th>
-                        <th style={{ cursor: "pointer" }} onClick={() => handleSort("data di creazione")}>Data di creazione</th>
+
+                        <th style={{ cursor: "pointer" }} onClick={() => handleSort("titolo")}>
+                            <div className="d-inline-flex align-items-center gap-1">
+                                Titolo
+                                {renderSortIcon("titolo")}
+                            </div>
+                        </th>
+
+                        <th style={{ cursor: "pointer" }} onClick={() => handleSort("stato")}>
+                            <div className="d-inline-flex align-items-center gap-1">
+                                Stato
+                                {renderSortIcon("stato")}
+                            </div>
+                        </th>
+
+                        <th style={{ cursor: "pointer" }} onClick={() => handleSort("data di creazione")}>
+                            <div className="d-inline-flex align-items-center gap-1">
+                                Data di creazione
+                                {renderSortIcon("data di creazione")}
+                            </div>
+                        </th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    {tasks && sortTasks.map((t, i) => (
+                    {tasks && filterAndSortTasks.map((t, i) => (
                         <TaskRow
                             key={i}
                             index={i}

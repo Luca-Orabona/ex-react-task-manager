@@ -16,10 +16,10 @@ const getStatusClass = (status) => {
   }
 };
 
-const TaskRow = ({ title, status, createdAt, id} ) => {
+const TaskRow = ({ title, status, createdAt, id, index} ) => {
   return (
     <tr>
-      <td>{id}</td>
+      <td>{index + 1}</td>
       <td className={styles.title}><Link to={`/task/${id}`} className="text-decoration-none text-dark">{title}</Link></td>
       <td>
         <span className={getStatusClass(status)} title={status}></span>

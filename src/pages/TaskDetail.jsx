@@ -118,13 +118,18 @@ const TaskDetail = () => {
               </p>
             </div>
 
-            <button onClick={() => setShowModalDelete(true)} className="btn btn-danger w-100 mt-3 fw-semibold">
-              Elimina Task
-            </button>
+            <div className="d-flex gap-5">
 
-            <button onClick={() => setShowModificationModal(true)} className="btn btn-warning w-100 mt-3 fw-semibold">
-              Modifica Task
-            </button>
+              <button onClick={() => setShowModificationModal(true)} className="btn btn-warning w-100 mt-3 fw-semibold">
+                Modifica Task
+              </button>
+
+              <button onClick={() => setShowModalDelete(true)} className="btn btn-danger w-100 mt-3 fw-semibold">
+                Elimina Task
+              </button>
+
+            </div>
+
           </div>
         </div>
       </section>

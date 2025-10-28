@@ -1,17 +1,67 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
-import ModalDelete from "../components/ModalDelete"
+import ModalDelete from "../components/ModalDelete";
+import ModificationModal from "../components/ModificationModal";
 import { useRef, useState } from "react";
 
+const symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~";
+
 const TaskDetail = () => {
-  const { tasks, removeTask } = useGlobalContext();
+  const { tasks, removeTask, updateTask } = useGlobalContext();
   const { id } = useParams();
   const navigate = useNavigate();
 
-
   //modale elimina task
-  const [showModal, setShowModal] = useState(false);
-  const modalRef = useRef();
+  const [showModalDelete, setShowModalDelete] = useState(false);
+
+
+  //modale modifica task
+  const [title, setTitle] = useState("");
+  const [error, setError] = useState("");
+  const [showModificationModal, setShowModificationModal] = useState(false);
+  const statusRef = useRef();
+  const descriptionRef = useRef();
+
+  const status = [...new Set(tasks.map((t) => t.status))];
+
+  const isValidTitle = title.split("").every(char => !symbols.includes(char));
+
+
+  //Gestione submit form
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (
+      !title.trim() ||
+      !descriptionRef.current.value.trim() ||
+      !statusRef.current.value
+    ) {
+      setError("Tutti i campi devono essere compilati");
+      return;
+    }
+
+    const newTask = {
+      title,
+      description: descriptionRef.current.value,
+      status: statusRef.current.value
+    }
+
+
+
+    updateTask(newTask, id)
+    setShowModificationModal(false);
+    navigate("/");
+
+    setError(""); // reset errori
+
+    // reset campi
+    descriptionRef.current.value = "";
+    statusRef.current.value = "";
+    setTitle("");
+  };
+
+
+
 
   const task = tasks.find((t) => t.id === Number(id));
 
@@ -68,23 +118,90 @@ const TaskDetail = () => {
               </p>
             </div>
 
-            <button onClick={() => setShowModal(true)}  className="btn btn-danger w-100 mt-3 fw-semibold">
+            <button onClick={() => setShowModalDelete(true)} className="btn btn-danger w-100 mt-3 fw-semibold">
               Elimina Task
+            </button>
+
+            <button onClick={() => setShowModificationModal(true)} className="btn btn-warning w-100 mt-3 fw-semibold">
+              Modifica Task
             </button>
           </div>
         </div>
       </section>
 
       <ModalDelete
-        ref={modalRef}
-        show={showModal}
+        show={showModalDelete}
         title="Sei sicuro di voler eliminare la task?"
-        onClose={() => setShowModal(false)}
+        onClose={() => setShowModalDelete(false)}
         onConfirm={() => {
           removeTask(id);
-          setShowModal(false);
+          setShowModalDelete(false);
           navigate("/");
         }}
+      />
+
+
+      <ModificationModal
+        show={showModificationModal}
+        title="Modifica task"
+        onClose={() => setShowModificationModal(false)}
+        onConfirm={handleSubmit}
+        content={
+          <>
+            {/* TITLE */}
+            <div className="mb-3">
+              <div className="wrapperInput">
+                <input
+                  type="text"
+                  className="form-control"
+                  id="formTitle"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Titolo"
+                />
+                <label htmlFor="formTitle" className="form-label">
+                  Titolo
+                </label>
+              </div>
+
+              {title.trim() && (
+                <p className={`${isValidTitle ? "text-success" : "text-danger"} mt-1`}>
+                  {isValidTitle ? "" : "Il titolo non può contenere caratteri speciali"}
+                </p>
+              )}
+            </div>
+
+            {/* DESCRIPTION */}
+            <div className="mb-3">
+              <label htmlFor="formDescription" className="form-label">
+                Descrizione
+              </label>
+              <textarea
+                className="form-control"
+                id="formDescription"
+                rows="3"
+                ref={descriptionRef}
+                placeholder="Inserisci una descrizione"
+              />
+            </div>
+
+            {/* STATUS */}
+            <div className="mb-3">
+              <label htmlFor="formStatus" className="form-label">
+                Stato
+              </label>
+              <select className="form-select" id="formStatus" ref={statusRef}>
+                {status.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {error && <p className="text-danger">{error}</p>}
+          </>
+        }
       />
 
     </>

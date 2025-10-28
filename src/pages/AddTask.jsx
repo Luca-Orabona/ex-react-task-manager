@@ -37,6 +37,7 @@ const AddTask = () => {
     
     addTask(newTask)
     
+    
     setError(""); // reset errori
 
     // reset campi

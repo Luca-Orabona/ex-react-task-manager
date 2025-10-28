@@ -1,15 +1,11 @@
-import { forwardRef } from "react";
 import ReactDOM from "react-dom";
 
-const ModalDelete = forwardRef(function Modal(
-  { title, show, onConfirm = () => { }, onClose = () => { } },
-  ref
-) {
+const ModalDelete = ({ title, show, onConfirm = () => { }, onClose = () => { } }) => {
   if (!show) return null;
 
   return ReactDOM.createPortal(
     <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex justify-content-center align-items-center z-3">
-      <div className="bg-white rounded-4 shadow-lg p-4 text-center" style={{ maxWidth: "450px", width: "90%" }} ref={ref}>
+      <div className="bg-white rounded-4 shadow-lg p-4 text-center" style={{ maxWidth: "450px", width: "90%" }}>
         {/* Titolo */}
         <h5 className="fw-bold mb-3">{title}</h5>
 
@@ -28,7 +24,7 @@ const ModalDelete = forwardRef(function Modal(
     </div>,
     document.body
   );
-});
+};
 
 export default ModalDelete;
 

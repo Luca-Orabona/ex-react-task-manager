@@ -54,7 +54,30 @@ const useTasks = () => {
 
     };
 
-    const updateTask = async () => {
+    const updateTask = async (updateTask, id) => {
+       try {
+            const data = await fetchJson(`${VITE_URL_API}/tasks/${id}`,
+                {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updateTask)
+                },
+            );
+            console.log(data);
+
+            // Aggiorna stato locale
+            if (data.success) {
+                const newTasks = tasks.map(t => t.id === Number(id) ? data.task : t);
+                alert(`Task modificata`)
+                setTasks(newTasks);
+                console.log(data);
+                
+            } else {
+                throw new Error(`Errore: nessun dato ricevuto!`)
+            }
+        } catch (error) {
+            alert(`Errore: non è stato possibile modificare i dati!`);
+        }
 
     };
 

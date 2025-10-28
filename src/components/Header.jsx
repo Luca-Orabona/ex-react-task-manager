@@ -23,7 +23,7 @@ const Header = () => {
                ${isActive ? styles.active : styles.inactive}`
             }
           >
-            Add Tasks
+            Aggiungi Tasks
           </NavLink>
         </nav>
       </div>

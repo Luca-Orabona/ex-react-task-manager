@@ -26,6 +26,41 @@
   border-bottom: none; /* rimuove il bordo inferiore dell'ultima riga */
 }
 
+.wrapperInput {
+  position: relative;
+  margin-top: 5px;
+}
+
+input {
+  padding: 0;
+}
+
+input::placeholder {
+  color: rgb(15, 14, 14) !important;
+}
+
+
+.wrapperInput input:focus + label {
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+.wrapperInput input:focus::placeholder {
+  color: transparent !important;
+  transition: color 0.4s ease;
+}
+
+
+.wrapperInput label{
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  font-size: small;
+  background-color: #ffffff;
+  padding: 0 3px;
+  opacity: 0;
+}
+
 
 
 

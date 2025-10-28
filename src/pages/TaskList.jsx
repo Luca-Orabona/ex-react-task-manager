@@ -9,9 +9,9 @@ const TaskList = () => {
             <table className="custom-table">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Name</th>
-                        <th>Status</th>
+                        <th>#</th>
+                        <th>Nome</th>
+                        <th>Stato</th>
                         <th>Data di creazione</th>
                     </tr>
                 </thead>

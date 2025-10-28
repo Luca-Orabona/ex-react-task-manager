@@ -4,7 +4,7 @@ import { useGlobalContext } from "../context/GlobalContext";
 const symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~";
 
 const AddTask = () => {
-  const { tasks } = useGlobalContext();
+  const { tasks, addTask } = useGlobalContext();
 
   const [title, setTitle] = useState("");
   const [error, setError] = useState("");
@@ -29,8 +29,14 @@ const AddTask = () => {
       return;
     }
 
-    alert("Task aggiunta");
-
+    const newTask = {
+      title,
+      description: descriptionRef.current.value,
+      status: statusRef.current.value
+    }
+    
+    addTask(newTask)
+    
     setError(""); // reset errori
 
     // reset campi

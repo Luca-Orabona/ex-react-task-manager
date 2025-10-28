@@ -1,12 +1,37 @@
 import { useEffect, useState } from "react";
 const { VITE_URL_API } = import.meta.env
 
+const fetchJson = async (url, option = {}) => {
+    const resp = await fetch(url, option);
+    const obj = resp.json();
+    return obj;
+};
+
 const useTasks = () => {
 
     const [tasks, setTasks] = useState([]);
 
 
-    const addTasks = async () => {
+    const addTask = async (newTask) => {
+        try {
+            const data = await fetchJson(`${VITE_URL_API}/tasks`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newTask)
+                },
+            );
+            console.log(data);
+            // Aggiorna stato locale
+            if (data.success) {
+                setTasks(prev => [...prev, data.task]);
+                alert(`Task aggiunta`)
+            } else {
+                throw new Error(`Errore: nessun dato ricevuto!`)
+            }
+        } catch (error) {
+            alert(`Errore: non è stato possibile inviare i dati!`);  
+        }
 
     };
 
@@ -21,8 +46,7 @@ const useTasks = () => {
 
     const getTask = async () => {
         try {
-            const resp = await fetch(`${VITE_URL_API}/tasks`);
-            const data = await resp.json();
+            const data = await fetchJson(`${VITE_URL_API}/tasks`);
             setTasks(data)
             console.log(data);
 
@@ -35,7 +59,7 @@ const useTasks = () => {
         getTask()
     }, [])
 
-    return { tasks, addTasks, removeTask, updateTask };
+    return { tasks, addTask, removeTask, updateTask };
 };
 
 export default useTasks;

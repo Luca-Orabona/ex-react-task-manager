@@ -30,15 +30,29 @@ const useTasks = () => {
                 throw new Error(`Errore: nessun dato ricevuto!`)
             }
         } catch (error) {
-            alert(`Errore: non è stato possibile inviare i dati!`);  
+            alert(`Errore: non è stato possibile inviare i dati!`);
         }
 
     };
 
-    const removeTask = async () => {
+    const removeTask = async (id) => {
+        try {
+            const data = await fetchJson(`${VITE_URL_API}/tasks/${id}`, { method: "DELETE" });
+
+            if (data.success) {
+                const newTask = tasks.filter(t => t.id !== Number(id));
+                setTasks(newTask);
+                alert(`Task eliminata`);
+            } else {
+                throw new Error(`${data.message}`);
+            }
+
+        } catch (error) {
+            alert(`Errore: non è stato possibile eliminare la task.`);
+
+        }
 
     };
-
 
     const updateTask = async () => {
 

@@ -5,7 +5,7 @@ const TaskList = () => {
     const { tasks } = useGlobalContext();
 
     return (
-        <div className="container mt-3">
+        <div className="container mt-4 mb-4">
             <table className="custom-table">
                 <thead>
                     <tr>

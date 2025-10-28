@@ -1,20 +1,21 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../context/GlobalContext";
 
 const TaskDetail = () => {
-  const { tasks } = useGlobalContext();
+  const { tasks, removeTask} = useGlobalContext();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const task = tasks.find((t) => t.id === Number(id));
 
   const getStatusClass = (status) => {
     switch (status) {
       case "To do":
-        return "bg-danger"; 
+        return "bg-danger";
       case "Doing":
-        return "bg-warning text-dark"; 
+        return "bg-warning text-dark";
       case "Done":
-        return "bg-success"; 
+        return "bg-success";
       default:
         return "bg-secondary";
     }
@@ -59,7 +60,10 @@ const TaskDetail = () => {
             </p>
           </div>
 
-          <button className="btn btn-danger w-100 mt-3 fw-semibold">
+          <button onClick={() => {
+            removeTask(id);
+            navigate(`/`);
+          }} className="btn btn-danger w-100 mt-3 fw-semibold">
             Elimina Task
           </button>
         </div>

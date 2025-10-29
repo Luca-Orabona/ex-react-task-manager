@@ -1,16 +1,30 @@
 import { useGlobalContext } from "../context/GlobalContext";
 import { useState, useMemo, useCallback } from "react";
 import TaskRow from "../components/TaskRow";
-import { ArrowUpWideNarrow, ArrowDownWideNarrow } from "lucide-react";
+import { ArrowUpWideNarrow, ArrowDownWideNarrow, Trash } from "lucide-react";
 import { debounce } from "../utils/Debounce.js"
 
 const TaskList = () => {
-    const { tasks } = useGlobalContext();
+    const { tasks, removeMultipleTasks } = useGlobalContext();
+
+    const [selectedTaskIds, setSelectedTaskIds] = useState([]);
+    console.log(selectedTaskIds);
+
 
     const [searchQuery, setSearchQuery] = useState("")
 
     const [sortBy, setSortBy] = useState("Data di creazione");
     const [sortOrder, setSortOrder] = useState(1);
+
+
+    const toggleSelection = (taskId) => {
+        if (!selectedTaskIds.includes(taskId)) {
+            setSelectedTaskIds(prev => [...prev, taskId])
+        } else {
+            const removeTaskId = selectedTaskIds.filter(id => id !== taskId);
+            setSelectedTaskIds(removeTaskId)
+        }
+    };
 
 
     const handleSort = (field) => {
@@ -66,6 +80,18 @@ const TaskList = () => {
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>
+                            <button
+                                disabled={selectedTaskIds.length === 0}
+                                className={`bg-transparent border-0 p-0 ${selectedTaskIds.length > 0 ? "text-white" : "text-white-50"}`}
+                            >
+                                <Trash
+                                    size={18}
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => removeMultipleTasks(selectedTaskIds, setSelectedTaskIds)}
+                                />
+                            </button>
+                        </th>
 
                         <th style={{ cursor: "pointer" }} onClick={() => handleSort("titolo")}>
                             <div className="d-inline-flex align-items-center gap-1">
@@ -99,6 +125,8 @@ const TaskList = () => {
                             title={t.title}
                             status={t.status}
                             createdAt={t.createdAt}
+                            checked={selectedTaskIds.includes(t.id)}
+                            onToggle={() => toggleSelection(t.id)}
                         />
                     ))}
                 </tbody>

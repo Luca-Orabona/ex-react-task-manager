@@ -8,8 +8,46 @@ const fetchJson = async (url, option = {}) => {
 };
 
 const useTasks = () => {
-
     const [tasks, setTasks] = useState([]);
+
+
+    const removeMultipleTasks = async (arrayId, setArrayId) => {
+        try {
+            //Creo un array di Promise per eliminare tutte le task selezionate
+            const arrayPromise = arrayId.map(id =>
+                fetchJson(`${VITE_URL_API}/tasks/${id}`, { method: "DELETE" })
+            );
+
+            //Attendo la risoluzione di tutte le Promise (anche quelle fallite)
+            const results = await Promise.allSettled(arrayPromise);
+
+            //Trovo quelle fallite, e recupera gli ID corrispondenti
+            const failedIds = results
+                .map((r, i) => (r.status === "rejected" ? arrayId[i] : null))
+                .filter(Boolean);
+
+            if (failedIds.length > 0) {
+                throw new Error(`❌ Non è stato possibile eliminare le task con id: ${failedIds.join(", ")}`);
+            }
+
+            //Trovo gli ID eliminati con successo
+            const deletedIds = results
+                .map((r, i) => (r.status === "fulfilled" ? arrayId[i] : null))
+                .filter(Boolean);
+
+            //Aggiorno lo stato locale eliminando le task riuscite
+            setTasks(prev => prev.filter(t => !deletedIds.includes(t.id)));
+
+            //Svuoto la selezione
+            setArrayId([]);
+
+            alert("✅ Tutte le task eliminate con successo!");
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
+
 
 
     const addTask = async (newTask) => {
@@ -55,7 +93,7 @@ const useTasks = () => {
     };
 
     const updateTask = async (updateTask, id) => {
-       try {
+        try {
             const data = await fetchJson(`${VITE_URL_API}/tasks/${id}`,
                 {
                     method: "PUT",
@@ -71,7 +109,7 @@ const useTasks = () => {
                 alert(`Task modificata`)
                 setTasks(newTasks);
                 console.log(data);
-                
+
             } else {
                 throw new Error(`Errore: nessun dato ricevuto!`)
             }
@@ -96,7 +134,7 @@ const useTasks = () => {
         getTask()
     }, [])
 
-    return { tasks, addTask, removeTask, updateTask };
+    return { tasks, addTask, removeTask, updateTask, removeMultipleTasks };
 };
 
 export default useTasks;

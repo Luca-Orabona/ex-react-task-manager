@@ -16,11 +16,19 @@ const getStatusClass = (status) => {
   }
 };
 
-const TaskRow = ({ title, status, createdAt, id, index} ) => {
+const TaskRow = ({ title, status, createdAt, id, index, checked, onToggle }) => {
   return (
     <tr>
       <td>{index + 1}</td>
-      <td className={styles.title}><Link to={`/task/${id}`} className="text-decoration-none text-dark">{title}</Link></td>
+      <td>
+        <input
+          style={{ cursor: "pointer" }}
+          type="checkbox"
+          checked={checked}
+          onChange={onToggle}
+        />
+      </td>
+      <td className={styles.title}><Link to={`/task/${id}`} className="text-primary">{title}</Link></td>
       <td>
         <span className={getStatusClass(status)} title={status}></span>
       </td>
